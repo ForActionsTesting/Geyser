@@ -1,0 +1,22 @@
+name: Process Pull Request
+
+on:
+  pull_request_target:
+
+jobs:
+  build:
+    permissions: {}
+    secrets: {}
+    uses: ./.github/workflows/build-remote.yml@master
+    with:
+      repository: ${{ github.event.pull_request.head.repo.full_name }}
+      ref: ${{ github.event.pull_request.head.sha }}
+  preview:
+    needs: [build]
+    if: >-
+      contains(github.event.pull_request.labels.*.name, 'PR: Needs Testing')
+    secrets: inherit
+    uses: ./.github/workflows/preview.yml@master
+    with:
+      build: ${{ github.run_number }}
+      version: pr.${{ github.event.pull_request.number }}

@@ -1,13 +1,26 @@
 name: Build Pull Request
 
-on: 
-  pull_request:
-  merge_group:
+on:
+  workflow_call:
+    inputs:
+      repository:
+        required: true
+        description: 'The repo of the PR'
+        type: string
+      ref:
+        required: true
+        description: 'The ref of the PR'
+        type: string
+
+permissions: {}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Print Action Context
+        run: ${{ tojson(github.event) }}
+        shell: cat {0}
       - name: Set up JDK 17
         # See https://github.com/actions/setup-java/commits
         uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93 # v4.0.0
@@ -38,6 +51,8 @@ jobs:
         # See https://github.com/actions/checkout/commits
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
+          repository: ${{ inputs.repository }}
+          ref: ${{ inputs.ref }}
           submodules: recursive
           path: geyser
 
@@ -51,6 +66,7 @@ jobs:
         with:
           arguments: build
           build-root-directory: geyser
+          cache-read-only: true
 
       - name: Archive artifacts (Geyser Fabric)
         # See https://github.com/actions/upload-artifact/commits
@@ -102,21 +118,3 @@ jobs:
           name: Geyser ViaProxy
           path: geyser/bootstrap/viaproxy/build/libs/Geyser-ViaProxy.jar
           if-no-files-found: error
-
-      - name: Trigger Preview Deployment
-        if: >-
-          contains(github.event.pull_request.labels.*.name, 'PR: Needs Testing')
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
-        with:
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'preview.yml',
-              ref: 'master',
-              inputs: {
-                runId: '${{ github.run_id }}',
-                build: '${{ github.run_number }}',
-                version: 'pr.${{ github.event.pull_request.number }}'
-              }
-            });
