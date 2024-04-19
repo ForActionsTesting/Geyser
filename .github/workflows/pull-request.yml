@@ -7,7 +7,7 @@ jobs:
   build:
     permissions: {}
     secrets: {}
-    uses: ./.github/workflows/build-remote.yml@master
+    uses: ./.github/workflows/build-remote.yml
     with:
       repository: ${{ github.event.pull_request.head.repo.full_name }}
       ref: ${{ github.event.pull_request.head.sha }}
@@ -16,7 +16,7 @@ jobs:
     if: >-
       contains(github.event.pull_request.labels.*.name, 'PR: Needs Testing')
     secrets: inherit
-    uses: ./.github/workflows/preview.yml@master
+    uses: ./.github/workflows/preview.yml
     with:
       build: ${{ github.run_number }}
       version: pr.${{ github.event.pull_request.number }}
