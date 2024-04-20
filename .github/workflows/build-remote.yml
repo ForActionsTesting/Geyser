@@ -29,25 +29,6 @@ jobs:
           java-version: 17
           distribution: temurin
 
-      - name: Check if the author has forked the API repo
-        # See https://github.com/Kas-tle/find-forks-action/commits
-        uses: Kas-tle/find-forks-action@e3955d66c41a1af1e61c5ec3f88a9b1470b296ab # v1.1.0
-        id: find_forks
-        with:
-          owner: GeyserMC
-          repo: api
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Use author's API repo if it exists
-        if: ${{ steps.find_forks.outputs.target_branch_found == 'true' }}
-        env:
-          API_FORK_URL: ${{ steps.find_forks.outputs.user_fork_url }}
-          API_FORK_BRANCH: ${{ github.event.pull_request.head.ref }}
-        run: |
-          git clone "${API_FORK_URL}" --single-branch --branch "${API_FORK_BRANCH}" api
-          cd api
-          ./gradlew publishToMavenLocal
-
       - name: Checkout repository and submodules
         # See https://github.com/actions/checkout/commits
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
