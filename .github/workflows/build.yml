@@ -7,8 +7,9 @@ on:
       - 'gh-readonly-queue/**'
     paths-ignore:
       - '.github/ISSUE_TEMPLATE/*.yml'
-      - '.github/actions/pullrequest.yml'
+      - '.github/actions/build-remote.yml'
       - '.github/actions/preview.yml'
+      - '.github/actions/pull-request.yml'
       - '.idea/copyright/*.xml'
       - '.gitignore'
       - 'CONTRIBUTING.md'
@@ -23,6 +24,13 @@ jobs:
     env:
       PROJECT: 'geyser'
     steps:
+      - name: Set Build Number
+        env:
+          BUILD_JSON: ${{ vars.RELEASEACTION_PREVRELEASE }}
+        run: |
+          BUILD_NUMBER=$(echo $BUILD_JSON | jq --arg branch "${GITHUB_REF_NAME}" 'if .[$branch] == null then 1 else .[$branch] | .t | tonumber + 1 end // 1')
+          echo "BUILD_NUMBER=${BUILD_NUMBER}" >> $GITHUB_ENV
+
       - name: Checkout repository and submodules
         # See https://github.com/actions/checkout/commits
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -134,6 +142,7 @@ jobs:
             | .downloads |= map_values({"name", "sha256"})
             | {$project, "repo", $version, "number": .build, "changes", "downloads"}
           ' | tee metadata.json
+          echo
       - name: Publish to Downloads API
         if: ${{ success() && github.repository == 'GeyserMC/Geyser' && github.ref_name == 'master' }}
         shell: bash
