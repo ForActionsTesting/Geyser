@@ -48,8 +48,8 @@ jobs:
           distribution: temurin
           
       - name: Build
-        # See https://github.com/gradle/gradle-build-action/commits
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0 from https://github.com/gradle/actions/commits
+        # See https://github.com/gradle/actions/commits
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
         with:
           arguments: build
           gradle-home-cache-cleanup: true
@@ -116,7 +116,8 @@ jobs:
 
       - name: Get Release Metadata
         #if: ${{ success() && github.repository == 'GeyserMC/Geyser' && github.ref_name == 'master' }}
-        uses: Kas-tle/base-release-action@b863fa0f89bd15267a96a72efb84aec25f168d4c # https://github.com/Kas-tle/base-release-action/releases/tag/main-11
+        # See https://github.com/Kas-tle/base-release-action/releases/tag/main-11
+        uses: Kas-tle/base-release-action@b863fa0f89bd15267a96a72efb84aec25f168d4c # main-11
         with:
           appID: ${{ secrets.RELEASE_APP_ID }}
           appPrivateKey: ${{ secrets.RELEASE_APP_PK }}

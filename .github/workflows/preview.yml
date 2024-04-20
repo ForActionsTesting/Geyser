@@ -29,9 +29,6 @@ jobs:
     env:
       PROJECT: 'geyser-preview'
     steps:
-      - name: Print Action Context
-        run: ${{ tojson(github.event) }}
-        shell: cat {0}
       - name: Set Variables
         id: setvars
         run: |
@@ -51,7 +48,8 @@ jobs:
           merge-multiple: true
       - name: Get Preview Metadata
         #if: ${{ success() && github.repository == 'GeyserMC/Geyser' && github.ref_name == 'master' }}
-        uses: Kas-tle/base-release-action@664c39985eb9d0d393ce98e7eb8414d3d98e762a
+        # See https://github.com/Kas-tle/base-release-action/releases/tag/main-11
+        uses: Kas-tle/base-release-action@664c39985eb9d0d393ce98e7eb8414d3d98e762a # main-11
         with:
           appID: ${{ secrets.RELEASE_APP_ID }}
           appPrivateKey: ${{ secrets.RELEASE_APP_PK }}
