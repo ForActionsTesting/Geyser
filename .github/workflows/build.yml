@@ -115,7 +115,7 @@ jobs:
           arguments: publish
 
       - name: Get Release Metadata
-        if: ${{ success() && github.repository == 'GeyserMC/Geyser' && github.ref_name == 'master' }}
+        #if: ${{ success() && github.repository == 'GeyserMC/Geyser' && github.ref_name == 'master' }}
         uses: Kas-tle/base-release-action@b863fa0f89bd15267a96a72efb84aec25f168d4c # https://github.com/Kas-tle/base-release-action/releases/tag/main-11
         with:
           appID: ${{ secrets.RELEASE_APP_ID }}
@@ -131,7 +131,7 @@ jobs:
           releaseEnabled: false
           saveMetadata: true
       - name: Update Generated Metadata
-        if: ${{ success() && github.repository == 'GeyserMC/Geyser' && github.ref_name == 'master' }}
+        #if: ${{ success() && github.repository == 'GeyserMC/Geyser' && github.ref_name == 'master' }}
         run: |
           cat metadata.json
           echo
